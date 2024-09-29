@@ -1,0 +1,37 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  ACR_NAME: 'axwaymanishdevops'
+  IMAGE_NAME: 'myapp'
+
+steps:
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'axwaymanishdevops'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      # Set ACR login server
+      ACR_LOGIN_SERVER=$(az acr show --name $(ACR_NAME) --query "loginServer" --output tsv)
+
+      # Log in to ACR
+      az acr login --name $(ACR_NAME)
+
+      # Build Docker image
+      docker build -t $ACR_LOGIN_SERVER/$(IMAGE_NAME):$(Build.BuildId) .
+
+      # Push Docker image to ACR
+      docker push $ACR_LOGIN_SERVER/$(IMAGE_NAME):$(Build.BuildId)
+
+      # Deploy the image to Azure Container Apps
+      az containerapp create --name my-container-app \
+        --resource-group <RESOURCE_GROUP> \
+        --environment <ENV_NAME> \
+        --image $ACR_LOGIN_SERVER/$(IMAGE_NAME):$(Build.BuildId) \
+        --target-port 3000 \
+        --ingress 'external' \
+        --registry-server $ACR_LOGIN_SERVER
