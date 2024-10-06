@@ -3,6 +3,7 @@ trigger:
 
 pool:
   vmImage: 'ubuntu-latest'
+  name: 'Default'
 
 variables:
   ACR_NAME: 'axwaymanishdevops'
