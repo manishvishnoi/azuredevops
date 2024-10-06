@@ -11,7 +11,7 @@ variables:
 steps:
 - task: AzureCLI@2
   inputs:
-    azureSubscription: 'axwaymanishdevops'
+    azureSubscription: 'axwaymanishdepops1'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
