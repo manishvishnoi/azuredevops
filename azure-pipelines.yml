@@ -19,7 +19,7 @@ steps:
       $ACR_LOGIN_SERVER = az acr show --name $(ACR_NAME) --query "loginServer" --output tsv
 
       # Log in to ACR
-      az acr login --name $(ACR_NAME)
+      az acr login --name $(ACR_NAME) --expose-token
 
       # Build Docker image
       docker build -t $ACR_LOGIN_SERVER/$(IMAGE_NAME):$(Build.BuildId) .
