@@ -19,7 +19,11 @@ steps:
       $ACR_LOGIN_SERVER = az acr show --name $(ACR_NAME) --query "loginServer" --output tsv
 
       # Log in to ACR
-      az acr login --name $(ACR_NAME) --expose-token
+
+      ACR_USERNAME=$(az acr credential show --name $(ACR_NAME) --query "username" --output tsv)
+      ACR_PASSWORD=$(az acr credential show --name $(ACR_NAME) --query "passwords[0].value" --output tsv)
+      docker login $ACR_LOGIN_SERVER --username $ACR_USERNAME --password $ACR_PASSWORD
+      # az acr login --name $(ACR_NAME) --expose-token
 
       # Build Docker image
       docker build -t $ACR_LOGIN_SERVER/$(IMAGE_NAME):$(Build.BuildId) .
@@ -35,3 +39,4 @@ steps:
         --target-port 3000 `
         --ingress 'external' `
         --registry-server $ACR_LOGIN_SERVER
+
