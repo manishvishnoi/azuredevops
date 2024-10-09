@@ -35,7 +35,7 @@ steps:
       az containerapp create --name my-container-app `
         --resource-group RG-mavishnoi `
         --environment axwaymanishdevops `
-        --image $ACR_LOGIN_SERVER/$(IMAGE_NAME):$(Build.BuildId) `
+        --image $ACR_LOGIN_SERVER/$(IMAGE_NAME):latest `
         --target-port 3000 `
         --ingress 'external' `
         --registry-server $ACR_LOGIN_SERVER
