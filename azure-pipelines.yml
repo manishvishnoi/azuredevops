@@ -12,24 +12,24 @@ steps:
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'axwaymanishdepops1'
-    scriptType: 'pscore'  # PowerShell Core (compatible on both Windows and Linux)
+    scriptType: 'pscore'  # Use PowerShell Core (cross-platform) for Windows or Linux
     scriptLocation: 'inlineScript'
     inlineScript: |
       # Set ACR login server
-      $ACR_LOGIN_SERVER = az acr show --name $(ACR_NAME) --query "loginServer" --output tsv
+      $ACR_LOGIN_SERVER = $(az acr show --name $(ACR_NAME) --query "loginServer" --output tsv)
 
-      # Log in to ACR
+      # Log in to ACR by fetching the credentials
+      $ACR_USERNAME = $(az acr credential show --name $(ACR_NAME) --query "username" --output tsv)
+      $ACR_PASSWORD = $(az acr credential show --name $(ACR_NAME) --query "passwords[0].value" --output tsv)
 
-      ACR_USERNAME=$(az acr credential show --name $(ACR_NAME) --query "username" --output tsv)
-      ACR_PASSWORD=$(az acr credential show --name $(ACR_NAME) --query "passwords[0].value" --output tsv)
+      # Login to Docker with the ACR credentials
       docker login $ACR_LOGIN_SERVER --username $ACR_USERNAME --password $ACR_PASSWORD
-      # az acr login --name $(ACR_NAME) --expose-token
 
-      # Build Docker image
-      docker build -t $ACR_LOGIN_SERVER/$(IMAGE_NAME):$(Build.BuildId) .
+      # Build Docker image (provide the correct Dockerfile path)
+      docker build -t "$ACR_LOGIN_SERVER/$($IMAGE_NAME):$(Build.BuildId)" .
 
       # Push Docker image to ACR
-      docker push $ACR_LOGIN_SERVER/$(IMAGE_NAME):$(Build.BuildId)
+      docker push "$ACR_LOGIN_SERVER/$($IMAGE_NAME):$(Build.BuildId)"
 
       # Deploy the image to Azure Container Apps
       az containerapp create --name my-container-app `
