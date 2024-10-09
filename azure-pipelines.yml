@@ -29,10 +29,9 @@ steps:
 
       # Deploy the image to Azure Container Apps
       az containerapp create --name my-container-app `
-        --resource-group <RESOURCE_GROUP> `
-        --environment <ENV_NAME> `
+        --resource-group RG-mavishnoi `
+        --environment axwaymanishdevops `
         --image $ACR_LOGIN_SERVER/$(IMAGE_NAME):$(Build.BuildId) `
         --target-port 3000 `
         --ingress 'external' `
         --registry-server $ACR_LOGIN_SERVER
-
