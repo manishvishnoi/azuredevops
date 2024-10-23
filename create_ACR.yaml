@@ -19,7 +19,7 @@ jobs:
         scriptLocation: 'inlineScript'
         inlineScript: |
           # Variables
-          $ACR_NAME='axwayTEST'       # Must be globally unique
+          $ACR_NAME='axwaytest221'       # Must be globally unique
           $RESOURCE_GROUP='RG-mavishnoi'
           $LOCATION='westus'         # e.g., eastus, westus, etc.
 
