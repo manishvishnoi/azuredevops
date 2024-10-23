@@ -1,0 +1,45 @@
+trigger:
+  branches:
+    include:
+      - main
+pool:
+  name: 'Default'
+
+
+jobs:
+- job: CreateACR
+  displayName: 'Create Azure Container Registry'
+  steps:
+
+    - task: AzureCLI@2
+      displayName: 'Login to Azure'
+      inputs:
+        azureSubscription: 'axwaymanishdepops1'
+        scriptType: 'pscore'  # Use PowerShell Core (cross-platform) for Windows or Linux
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          # Variables
+          ACR_NAME='axwayTEST'       # Must be globally unique
+          RESOURCE_GROUP='RG-mavishnoi'
+          LOCATION='westus'         # e.g., eastus, westus, etc.
+
+          # Create the Azure Container Registry
+          echo "Creating Azure Container Registry..."
+          az acr create --name $ACR_NAME --resource-group $RESOURCE_GROUP --location $LOCATION --sku Basic --admin-enabled true
+
+          echo "Azure Container Registry $ACR_NAME created successfully!"
+
+    - task: AzureCLI@2
+      displayName: 'Verify ACR Creation'
+      inputs:
+        azureSubscription: 'axwaymanishdepops1'
+        scriptType: 'pscore'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          ACR_NAME='axwayTEST'
+          RESOURCE_GROUP='RG-mavishnoi>'
+
+          # Check if ACR exists
+          echo "Checking Azure Container Registry..."
+          az acr show --name $ACR_NAME --resource-group $RESOURCE_GROUP --query "name" -o tsv
+          echo "ACR $ACR_NAME exists and is active."
