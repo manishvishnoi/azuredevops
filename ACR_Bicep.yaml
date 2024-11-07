@@ -25,6 +25,7 @@ jobs:
           az group create --name $resourceGroupName --location $location
           
           # Deploy the ACR using Bicep
-          az deployment group create \
-            --resource-group $resourceGroupName \
-            --template-file main.bicep
+          az deployment group create `
+            --resource-group $RESOURCE_GROUP `
+            --template-file './infrastructure/acr.bicep' `
+            --parameters location=$LOCATION acrName='axwaytest221'
