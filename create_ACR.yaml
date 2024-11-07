@@ -21,7 +21,7 @@ jobs:
           # Variables
           $ACR_NAME='axwaytest221'       # Must be globally unique
           $RESOURCE_GROUP='RG-mavishnoi'
-          $LOCATION='westus'         # e.g., eastus, westus, etc.
+          $LOCATION='westeurope'         # e.g., eastus, westus, etc.
 
           # Create the Azure Container Registry
           Write-Host "Creating Azure Container Registry..."
