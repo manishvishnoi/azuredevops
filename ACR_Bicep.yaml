@@ -19,7 +19,7 @@ jobs:
         inlineScript: |
           # Define parameters
           $resourceGroupName = 'RG-mavishnoi'
-          $location = 'westus'
+          $location = 'westeurope'
           
           # Create the resource group if it doesn't exist
           az group create --name $resourceGroupName --location $location
@@ -27,5 +27,5 @@ jobs:
           # Deploy the ACR using Bicep
           az deployment group create `
             --resource-group $RESOURCE_GROUP `
-            --template-file './infrastructure/acr.bicep' `
-            --parameters location=$LOCATION acrName='axwaytest221'
+            --template-file './main.bicep' `
+            --parameters location=$LOCATION acrName='axwaytest2210'
