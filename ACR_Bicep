@@ -1,0 +1,30 @@
+trigger:
+  branches:
+    include:
+      - main
+pool:
+  name: 'Default'
+
+jobs:
+- job: DeployACR
+  displayName: 'Deploy Azure Container Registry using Bicep'
+  steps:
+
+    - task: AzureCLI@2
+      displayName: 'Deploy ACR with Bicep'
+      inputs:
+        azureSubscription: 'axwaymanishdepops1'
+        scriptType: 'ps'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          # Define parameters
+          $resourceGroupName = 'RG-mavishnoi'
+          $location = 'westus'
+          
+          # Create the resource group if it doesn't exist
+          az group create --name $resourceGroupName --location $location
+          
+          # Deploy the ACR using Bicep
+          az deployment group create \
+            --resource-group $resourceGroupName \
+            --template-file main.bicep
