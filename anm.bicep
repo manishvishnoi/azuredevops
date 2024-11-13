@@ -7,22 +7,32 @@ param cpu int = 2
 param memory string = '4Gi'
 param targetPort int = 8090
 
-// Reference Existing Container Registry
+// Container Registry Reference (existing)
 resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existing = {
   name: acrName
 }
 
-// Reference Existing Azure Container App Environment
-resource containerAppEnv 'Microsoft.App/managedEnvironments@2022-10-01' existing = {
-  name: 'axwaymanishdevops'
+// Managed Environment: Create if not exists
+resource containerAppEnv 'Microsoft.App/managedEnvironments@2022-10-01' = if (!exists('Microsoft.App/managedEnvironments', managedEnvironmentName)) {
+  name: managedEnvironmentName
+  location: location
+  properties: {
+    // Define the environment properties
+  }
 }
 
-// Azure Container App
+// Reference the Managed Environment (either existing or newly created)
+resource containerAppEnvReference 'Microsoft.App/managedEnvironments@2022-10-01' existing = {
+  name: managedEnvironmentName
+  scope: resourceGroup()
+}
+
+// Azure Container App Definition
 resource containerApp 'Microsoft.App/containerApps@2022-10-01' = {
   name: containerAppName
   location: location
   properties: {
-    managedEnvironmentId: containerAppEnv.id
+    managedEnvironmentId: containerAppEnvReference.id
     configuration: {
       ingress: {
         external: true
