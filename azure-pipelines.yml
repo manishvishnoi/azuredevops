@@ -36,11 +36,11 @@ steps:
         --resource-group RG-mavishnoi `
         --environment managedEnvironment-RGmavishnoi-91ac-21march `
         --image $ACR_LOGIN_SERVER/anm:latest `
+        --env-vars ACCEPT_GENERAL_CONDITIONS=yes `
         --target-port 8090 `
         --ingress 'external' `
         --transport 'tcp' `
         --registry-server $ACR_LOGIN_SERVER `
-        --env-vars ACCEPT_GENERAL_CONDITIONS=YES `
         --cpu 2 `
         --memory 4Gi
 
