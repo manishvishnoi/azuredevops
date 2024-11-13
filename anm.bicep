@@ -1,8 +1,8 @@
 // Parameters
 param location string = resourceGroup().location
 param acrName string = 'axwaymanishdevops'
-param containerAppName string = 'my-anm-app'
-param imageName string = 'myapp'
+param containerAppName string = 'my-anm-bicep'
+param imageName string = 'anm'
 param acrSku string = 'Basic'  // ACR SKU type (Basic, Standard, Premium)
 param cpu int = 2
 param memory string = '4Gi'
