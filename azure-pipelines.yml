@@ -26,17 +26,21 @@ steps:
       docker login $ACR_LOGIN_SERVER --username $ACR_USERNAME --password $ACR_PASSWORD
 
       # Build Docker image (provide the correct Dockerfile path)
-      docker build -t "$ACR_LOGIN_SERVER/myapp:latest" '.\my-docker-app'
+      docker build -t "$ACR_LOGIN_SERVER/anm:latest" '.\my-docker-app'
 
       # Push Docker image to ACR
       docker push "$ACR_LOGIN_SERVER/myapp:latest"
 
       # Deploy the image to Azure Container Apps
-      az containerapp create --name my-container-app `
+      az containerapp create --name my-anm-app `
         --resource-group RG-mavishnoi `
-        --environment axwaymanishdevops `
-        --image $ACR_LOGIN_SERVER/myapp:latest `
-        --target-port 3000 `
+        --environment managedEnvironment-RGmavishnoi-91ac-21march `
+        --image $ACR_LOGIN_SERVER/anm:latest `
+        --target-port 8090 `
         --ingress 'external' `
-        --registry-server $ACR_LOGIN_SERVER
+        --transport 'tcp' `
+        --registry-server $ACR_LOGIN_SERVER `
+        --env-vars ACCEPT_GENERAL_CONDITIONS=YES `
+        --cpu 2 `
+        --memory 4Gi
 
