@@ -22,7 +22,7 @@ jobs:
           $location = 'westeurope'
           
           # Create the resource group if it doesn't exist
-          #az group create --name $resourceGroupName --location $location
+          az group create --name $resourceGroupName --location $location
           
           # Deploy the ACR using Bicep
           az deployment group create `
