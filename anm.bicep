@@ -3,27 +3,18 @@ param location string = resourceGroup().location
 param acrName string = 'axwaymanishdevops'
 param containerAppName string = 'my-anm-bicep'
 param imageName string = 'anm'
-param acrSku string = 'Basic'  // ACR SKU type (Basic, Standard, Premium)
 param cpu int = 2
 param memory string = '4Gi'
 param targetPort int = 8090
 
-// Container Registry
-resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
+// Reference Existing Container Registry
+resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existing = {
   name: acrName
-  location: location
-  sku: {
-    name: acrSku
-  }
 }
 
-// Output ACR Login Server
-output acrLoginServer string = acr.properties.loginServer
-
-// Azure Container App Environment
-resource containerAppEnv 'Microsoft.App/managedEnvironments@2022-10-01' = {
-  name: 'bicepdeployment'
-  location: location
+// Reference Existing Azure Container App Environment
+resource containerAppEnv 'Microsoft.App/managedEnvironments@2022-10-01' existing = {
+  name: 'managedEnvironment-RGmavishnoi-91ac-21march'
 }
 
 // Azure Container App
@@ -41,9 +32,6 @@ resource containerApp 'Microsoft.App/containerApps@2022-10-01' = {
       registries: [
         {
           server: acr.properties.loginServer
-          identity: {
-            type: 'UserAssigned' // Add your user-assigned managed identity here if available
-          }
         }
       ]
     }
