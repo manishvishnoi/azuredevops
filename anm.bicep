@@ -22,7 +22,7 @@ output acrLoginServer string = acr.properties.loginServer
 
 // Azure Container App Environment
 resource containerAppEnv 'Microsoft.App/managedEnvironments@2022-10-01' = {
-  name: 'managedEnvironment-RGmavishnoi-91ac-21march'
+  name: 'bicepdeployment'
   location: location
 }
 
