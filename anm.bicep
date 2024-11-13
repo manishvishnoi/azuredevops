@@ -15,7 +15,6 @@ resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
   sku: {
     name: acrSku
   }
-  adminUserEnabled: true  // Enable admin access for Docker login
 }
 
 // Output ACR Login Server
@@ -42,8 +41,9 @@ resource containerApp 'Microsoft.App/containerApps@2022-10-01' = {
       registries: [
         {
           server: acr.properties.loginServer
-          username: acr.listCredentials().username
-          password: acr.listCredentials().passwords[0].value
+          identity: {
+            type: 'UserAssigned' // Add your user-assigned managed identity here if available
+          }
         }
       ]
     }
