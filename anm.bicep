@@ -14,7 +14,7 @@ resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existin
 
 // Reference Existing Azure Container App Environment
 resource containerAppEnv 'Microsoft.App/managedEnvironments@2022-10-01' existing = {
-  name: 'managedEnvironment-RGmavishnoi-91ac-21march'
+  name: 'axwaymanishdevops'
 }
 
 // Azure Container App
