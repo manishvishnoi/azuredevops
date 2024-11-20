@@ -1,65 +1,44 @@
-// Parameters
-param location string = resourceGroup().location
 param acrName string = 'axwaymanishdevops'
-param containerAppName string = 'my-anm-bicep'
-param imageName string = 'anm'
-param cpu int = 2
-param memory string = '4Gi'
-param targetPort int = 8090
+param imageName string = 'myapp'
+param containerAppName string = 'my-anm-app'
 param managedEnvironmentName string = 'managedEnvironment-RGmavishnoi-91ac-21march'
+param targetPort int = 8090
+param acrPassword string
 
-// Container Registry Reference (existing)
-resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existing = {
-  name: acrName
-}
-
-// Check if the managed environment exists by attempting to reference it as an existing resource
-resource containerAppEnv 'Microsoft.App/managedEnvironments@2022-10-01' existing = {
-  name: managedEnvironmentName
-}
-
-// Nested deployment to create the managed environment if it doesn’t exist
-module createManagedEnv 'createManagedEnvironment.bicep' = if (empty(containerAppEnv)) {
-  name: 'createManagedEnvironmentDeployment'
-  params: {
-    location: location
-    managedEnvironmentName: managedEnvironmentName
-  }
-}
-
-// Reference the Managed Environment (either existing or newly created)
-resource containerAppEnvReference 'Microsoft.App/managedEnvironments@2022-10-01' existing = {
-  name: managedEnvironmentName
-}
-
-// Azure Container App Definition
-resource containerApp 'Microsoft.App/containerApps@2022-10-01' = {
+resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
   name: containerAppName
-  location: location
+  location: 'northeurope' // Replace with your desired location
   properties: {
-    managedEnvironmentId: containerAppEnvReference.id
+    managedEnvironmentId: resourceId('Microsoft.App/managedEnvironments', managedEnvironmentName)
     configuration: {
+      registries: [
+        {
+          server: '${acrName}.azurecr.io'
+          username: acrName
+          passwordSecretRef: 'acr-password' // Updated to valid secret name
+        }
+      ]
       ingress: {
         external: true
         targetPort: targetPort
-        transport: 'tcp'
       }
-      registries: [
+      secrets: [
         {
-          server: acr.properties.loginServer
+          name: 'acr-password' // Updated to valid secret name
+          value: acrPassword
         }
       ]
     }
     template: {
       containers: [
         {
-          image: '${acr.properties.loginServer}/${imageName}:latest'
           name: containerAppName
+          image: '${acrName}.azurecr.io/${imageName}:latest'
           resources: {
-            cpu: cpu
-            memory: memory
+            cpu: 2
+            memory: '4Gi'
           }
-          env: [
+          env: [ // Added environment variables
             {
               name: 'ACCEPT_GENERAL_CONDITIONS'
               value: 'yes'
@@ -67,6 +46,10 @@ resource containerApp 'Microsoft.App/containerApps@2022-10-01' = {
           ]
         }
       ]
+      scale: {
+        minReplicas: 1
+        maxReplicas: 3
+      }
     }
   }
 }
